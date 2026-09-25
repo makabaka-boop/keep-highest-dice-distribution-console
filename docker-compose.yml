@@ -1,0 +1,20 @@
+services:
+  odds:
+    build: ./odds
+    image: dice-odds
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  ui:
+    build: ./ui
+    image: dice-odds-ui
+    ports:
+      - "8080:80"
+    depends_on:
+      odds:
+        condition: service_healthy
